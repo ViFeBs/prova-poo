@@ -22,8 +22,8 @@ public class Game extends JFrame implements KeyListener {
 	private Ghost ghost2 = new Ghost(500,0,0);
 	private Ghost ghost3 = new Ghost(0,500,0);
 	private Ghost ghost4 = new Ghost(500,500,0);
-	private Bomb bomb = new Bomb(100,100);
-	private Booster booster = new Booster(400, 400, 100);
+	private Bomb bomb = new Bomb(100,100,true);
+	private Booster booster = new Booster(400, 400, true, 100);
 
 	private JLabel imgPlayer = new JLabel(new ImageIcon("src/images/pacman.png"));
 	private JLabel imgGhost1 = new JLabel(new ImageIcon("src/images/ghost.png"));
@@ -76,6 +76,10 @@ public class Game extends JFrame implements KeyListener {
 		updateLocation(imgGhost4, ghost4);
 		updateLocation(imgBomb, bomb);
 		updateLocation(imgBooster, booster);
+		if(!bomb.isVizivel())
+			imgBomb.setVisible(false);
+		if(!booster.isVizivel())
+			imgBooster.setVisible(false);
 		setTitle("Life: " + player.getLife());
 		SwingUtilities.updateComponentTreeUI(this);
 
@@ -92,29 +96,53 @@ public class Game extends JFrame implements KeyListener {
 	private void run() {
 		while (player.getLife() > 0) {
 			
-			if(ghost1.getPosicaoX() == player.getPosicaoX() && ghost1.getPosicaoY() == player.getPosicaoY())
-				player.setLife(player.getLife() - 5);
-			if(ghost2.getPosicaoX() == player.getPosicaoX() && ghost2.getPosicaoY() == player.getPosicaoY())
-				player.setLife(player.getLife() - 5);
-			if(ghost3.getPosicaoX() == player.getPosicaoX() && ghost3.getPosicaoY() == player.getPosicaoY())
-				player.setLife(player.getLife() - 5);
-			if(ghost4.getPosicaoX() == player.getPosicaoX() && ghost4.getPosicaoY() == player.getPosicaoY())
-				player.setLife(player.getLife() - 5);
-			if(bomb.getPosicaoX() == player.getPosicaoX() && bomb.getPosicaoY() == player.getPosicaoY())
-				bomb.takeLife(player);
-			if(booster.getPosicaoX() == player.getPosicaoX() && booster.getPosicaoY() == player.getPosicaoY()){
-				booster.playerBoosted(player);
+
+			//Colisão com Fantasmas
+			if(ghost1.getPosicaoX() == player.getPosicaoX() && ghost1.getPosicaoY() == player.getPosicaoY()){
+				if(!player.isInvencivel())
+					player.setLife(player.getLife() - 5);
+			}
+			if(ghost2.getPosicaoX() == player.getPosicaoX() && ghost2.getPosicaoY() == player.getPosicaoY()){
+				if(!player.isInvencivel())
+					player.setLife(player.getLife() - 5);
+			}
+			if(ghost3.getPosicaoX() == player.getPosicaoX() && ghost3.getPosicaoY() == player.getPosicaoY()){
+				if(!player.isInvencivel())
+					player.setLife(player.getLife() - 5);
+			}
+			if(ghost4.getPosicaoX() == player.getPosicaoX() && ghost4.getPosicaoY() == player.getPosicaoY()){
+				if(!player.isInvencivel())
+					player.setLife(player.getLife() - 5);
 			}
 
-			if(player.isInvencivel() == true)
+			//Colisão com bomba
+			if(bomb.isVizivel()){
+				if(bomb.getPosicaoX() == player.getPosicaoX() && bomb.getPosicaoY() == player.getPosicaoY()){
+					if(!player.isInvencivel())
+						bomb.takeLife(player);
+					bomb.setVizivel(false);
+				}
+			}
+			//Colisão com o booster
+			if(booster.isVizivel()){
+				if(booster.getPosicaoX() == player.getPosicaoX() && booster.getPosicaoY() == player.getPosicaoY()){
+					booster.playerBoosted(player);
+					System.out.println("Boostado");
+					booster.setVizivel(false);
+				}
+			}
+			//tempo do booster
+			if(player.isInvencivel() == true){
 				booster.setTimeBoost(booster.getTimeBoost()-1);
+				booster.playerBoosted(player);
+				System.out.println("Tempo boostado: " + booster.getTimeBoost() );
+			}
 			
-			System.out.println(player.getLife());
 			try {
-				//ghost1.moveGhost();
-				//ghost2.moveGhost();
-				//ghost3.moveGhost();
-				//ghost4.moveGhost();
+				ghost1.moveGhost();
+				ghost2.moveGhost();
+				ghost3.moveGhost();
+				ghost4.moveGhost();
 
 				player.movePrayer(player.getDirection());
 				Thread.sleep(speed);

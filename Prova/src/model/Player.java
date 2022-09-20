@@ -59,9 +59,21 @@ public class Player extends GameObject{
         }
     }
 
-    private boolean canMove(int direction){
-        if(direction <= this.getScreenSize())
-            return true;
-        return false;
+    private boolean canMove(int direction){  
+        boolean ok = false;
+        
+        if(direction == 0)
+            if(this.getPosicaoY() - 10 > 0)
+                ok = true; 
+        if(direction == 180)
+            if(this.getPosicaoY() + 10 < this.getScreenSize())
+                ok = true; 
+        if(direction == 270)
+            if(this.getPosicaoX() - 20 > 0)
+                ok = true; 
+        if(direction == 90)
+            if(this.getPosicaoX() + 10 < this.getScreenSize())
+                ok = true; 
+        return ok;
     }
 }

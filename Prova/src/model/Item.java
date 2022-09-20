@@ -14,8 +14,9 @@ public class Item extends GameObject{
     public Item() {
     }
 
-    public Item(int posicaoX, int posicaoY) {
+    public Item(int posicaoX, int posicaoY, boolean isVizivel) {
         super(posicaoX, posicaoY);
+        this.isVizivel = isVizivel;
     }
 
     
